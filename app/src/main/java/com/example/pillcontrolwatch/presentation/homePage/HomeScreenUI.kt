@@ -150,7 +150,6 @@ fun HomeScreenUI(
             Spacer(Modifier.height(8.dp))
             ProtectionStatusSection()
             MascotReminderSection()
-            CycleStatusSection()
             Spacer(Modifier.height(8.dp))
 
 
@@ -372,21 +371,7 @@ fun CycleStatusSection(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Botón de nuevo ciclo
-                Button(
-                    onClick = { showDialog = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Pink),
-                    shape = RoundedCornerShape(16.dp),
-                    contentPadding = PaddingValues(vertical = 14.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "NUEVO CICLO",
-                        color = White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                }
+
 
                 if (showDialog) {
                     CreateCycleDialog(
