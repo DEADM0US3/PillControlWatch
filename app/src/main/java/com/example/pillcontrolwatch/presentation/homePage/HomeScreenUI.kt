@@ -145,16 +145,15 @@ fun HomeScreenUI(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HeaderSection()
+            Spacer(Modifier.height(8.dp))
+            TakePillComponent()
+            Spacer(Modifier.height(8.dp))
             ProtectionStatusSection()
             MascotReminderSection()
             CycleStatusSection()
             Spacer(Modifier.height(8.dp))
-            TakePillComponent()
-            FriendsListSectionHome(
-                friends = friends,
-                onRemindClick = { friend -> friendsViewModel.sendReminder(friend.friend_id) },
-                navigateToFriends = navigateToFriends
-            )
+
+
         }
     }
 }
@@ -653,117 +652,6 @@ fun DateBlock(title: String, date: String) {
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold
             )
-        }
-    }
-}
-
-
-@Composable
-fun FriendsListSectionHome(
-    friends: List<FriendWithCycleInfo>,
-    onRemindClick: (FriendWithCycleInfo) -> Unit,
-    navigateToFriends: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .shadow(2.dp, RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .padding(12.dp)
-    ) {
-        Column {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Amigas", fontWeight = FontWeight.Bold, color = Black)
-                Text(
-                    text = "Ver más...",
-                    color = Pink,
-                    modifier = Modifier.clickable {
-                        navigateToFriends()
-                    }
-                )
-            }
-            Spacer(Modifier.height(8.dp))
-
-            // Mostrar máximo 3 amigas como resumen
-            friends.take(3).forEach { friend ->
-                FriendItemHome(user = friend, onRemind = { onRemindClick(friend) })
-            }
-        }
-    }
-}
-
-@Composable
-fun FriendItemHome(user: FriendWithCycleInfo, onRemind: () -> Unit) {
-    val hasCycle = user.recent_cycle_id != null
-    val hasTakenPill = user.pill_status_today == "taken"
-    val takeHour = user.take_hour // <- asegúrate de incluir `takeHour` en la clase si aún no está
-    val now = remember { LocalTime.now() }
-
-    // Calcular si está dentro de la ventana de 30 minutos
-    val isTimeToRemind = takeHour?.let { hourStr ->
-        try {
-            val takeTime = LocalTime.parse(hourStr, DateTimeFormatter.ofPattern("HH:mm:ss"))
-            val now = LocalTime.now()
-            val minutesDiff = ChronoUnit.MINUTES.between(now, takeTime)
-
-            minutesDiff <= 30
-        } catch (e: Exception) {
-            false
-        }
-    } ?: false
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFDFDFD)),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Spacer(Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = user.name ?: "Guest",
-                    fontWeight = FontWeight.Bold,
-                    color = Black,
-                    fontSize = 16.sp
-                )
-
-                if (!hasCycle) {
-                    Text("Sin ciclo activo", color = Color.Gray, fontSize = 12.sp)
-                } else if (hasTakenPill) {
-                    Text("Ya tomó su pastilla hoy 💊", color = Color(0xFF4CAF50), fontSize = 12.sp)
-                } else if(hasCycle && !isTimeToRemind)
-                {
-                    Text("Le puedes recordar a las ${user.take_hour}", color = Pink, fontSize = 12.sp)
-                }
-                else {
-                    Text("Recuerdale!!!!!", color = Color(0xFFE91E63), fontSize = 12.sp)
-                }
-            }
-
-            if (hasCycle && isTimeToRemind) {
-                Button(
-                    onClick = onRemind,
-                    colors = ButtonDefaults.buttonColors(containerColor = Pink),
-                    shape = RoundedCornerShape(8.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                ) {
-                    Text("Recordar", color = Color.White, fontSize = 12.sp)
-                }
-            }
         }
     }
 }

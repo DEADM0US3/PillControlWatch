@@ -5,8 +5,11 @@ import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -58,7 +61,9 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFD56A83))
-            .padding(20.dp),
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -156,7 +161,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
+        /*Text(
             text = "¿Olvidaste tu contraseña?",
             color = Color.White,
             fontSize = 14.sp,
@@ -171,7 +176,7 @@ fun LoginScreen(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFAFAFA))
         ) {
             Text("¿No tienes cuenta? Regístrate Aquí", color = Color(0xFFD56A83), fontWeight = FontWeight.Bold)
-        }
+        }*/
 
         // O si prefieres un texto clickeable en lugar de botón:
         /*Spacer(modifier = Modifier.height(8.dp))
