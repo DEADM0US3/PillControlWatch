@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21"
+
 }
 
 android {
@@ -58,6 +60,7 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
     implementation("androidx.compose.material3:material3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") // o superior
 
     implementation(libs.postgrest.kt)
     implementation(libs.storage.kt)

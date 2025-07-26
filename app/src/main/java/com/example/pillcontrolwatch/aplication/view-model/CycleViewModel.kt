@@ -13,9 +13,13 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Contextual
 
+
+@Serializable
 data class CalendarEvent(
-    val date: LocalDate,
+    @Contextual val date: LocalDate,
     val pillTaken: Boolean = false,
     val isMenstruation: Boolean = false,
     val isOvulation: Boolean = false,
@@ -38,7 +42,29 @@ private val supabaseClient: SupabaseClient
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    private val userId = supabaseClient.auth.currentUserOrNull()?.id.toString()
+    private var userId: String = ""
+
+    init {
+        viewModelScope.launch {
+            userId = loadUserId().toString()
+        }
+    }
+
+    private suspend fun loadUserId(): String? {
+        return try {
+            val user = supabaseClient.auth.currentUserOrNull()
+            if (user != null) {
+                user.id
+            } else {
+                val session = supabaseClient.auth.currentSessionOrNull()
+                supabaseClient.auth.retrieveUserForCurrentSession(updateSession = true).id
+            }
+        } catch (e: Exception) {
+            Log.e("PillViewModel", "Error al obtener userId: ${e.message}")
+            null
+        }
+    }
+
 
     fun fetchActiveCycle() {
         viewModelScope.launch {

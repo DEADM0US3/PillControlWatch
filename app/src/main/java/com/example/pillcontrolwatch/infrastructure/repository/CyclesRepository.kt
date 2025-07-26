@@ -3,13 +3,18 @@ package com.example.pills.pills.domain.repository
 import android.util.Log
 import com.example.pills.pills.domain.entities.Cycle
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 
 class CycleRepository(private val supabaseClient: SupabaseClient) {
+
+
 
     suspend fun createCycle(
         userId: String,

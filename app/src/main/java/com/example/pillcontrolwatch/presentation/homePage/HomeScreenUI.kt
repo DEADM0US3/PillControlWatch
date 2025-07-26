@@ -149,7 +149,6 @@ fun HomeScreenUI(
             TakePillComponent()
             Spacer(Modifier.height(8.dp))
             ProtectionStatusSection()
-            MascotReminderSection()
             Spacer(Modifier.height(8.dp))
 
 

@@ -1,5 +1,6 @@
 package com.example.pills.pills.infrastructure.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pills.pills.domain.entities.Pill
@@ -11,7 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.toString
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PillUiState(
     val isLoading: Boolean = false,
     val pillsOfMonth: List<Pill> = emptyList(),
@@ -22,6 +25,7 @@ data class PillUiState(
     val successMessage: String? = null
 )
 
+
 class PillViewModel(
     private val repository: PillRepository,
     private val client: SupabaseClient
@@ -30,7 +34,28 @@ class PillViewModel(
     private val _uiState = MutableStateFlow(PillUiState())
     val uiState: StateFlow<PillUiState> = _uiState
 
-    private val userId = client.auth.currentUserOrNull()?.id.toString();
+    private var userId: String = ""
+
+    init {
+        viewModelScope.launch {
+            userId = loadUserId().toString()
+        }
+    }
+
+    private suspend fun loadUserId(): String? {
+        return try {
+            val user = client.auth.currentUserOrNull()
+            if (user != null) {
+                user.id
+            } else {
+              //  val session = client.auth.currentSessionOrNull()
+                 client.auth.retrieveUserForCurrentSession(updateSession = true).id
+            }
+        } catch (e: Exception) {
+            Log.e("PillViewModel", "Error al obtener userId: ${e.message}")
+            null
+        }
+    }
 
     fun loadPillsOfCycle(cycle_id: String) {
         viewModelScope.launch {

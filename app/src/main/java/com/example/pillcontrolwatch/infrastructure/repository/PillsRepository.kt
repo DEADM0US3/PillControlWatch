@@ -3,9 +3,12 @@ package com.example.pills.pills.domain.repository
 import android.util.Log
 import com.example.pills.pills.domain.entities.Pill
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -23,6 +26,9 @@ data class CreatePill(
     val complications: String? = null,
 )
 class PillRepository(private val supabaseClient: SupabaseClient) {
+
+
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     private val formatter = DateTimeFormatter.ISO_DATE
 
