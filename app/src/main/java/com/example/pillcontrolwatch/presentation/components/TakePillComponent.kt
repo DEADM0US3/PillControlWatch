@@ -149,7 +149,7 @@ fun TakePillComponent(
     } ?: "Hora de toma no disponible"
 
     var AlertDialogTake by remember { mutableStateOf(false) }
-    val Pink = Color(0xFFE91E63) // O tu tono exacto
+    //val Pink = Color(0xFFE91E63) // O tu tono exacto
 
 
     Box(
@@ -157,97 +157,89 @@ fun TakePillComponent(
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .background(White)
-            .padding(20.dp)
+            .padding(16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .background(PinkLight),
-                contentAlignment = Alignment.Center
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "TOMA DE HOY",
+                color = Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = formattedDate,
+                color = GrayText,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text("🕒", fontSize = 36.sp)
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "TOMA DE HOY",
-                    color = Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = formattedDate,
-                    color = GrayText,
-                    fontSize = 13.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Box(
+                    modifier = Modifier
+                        .background(PinkLight, RoundedCornerShape(12.dp))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .background(PinkLight, RoundedCornerShape(12.dp))
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(takeHourFormatted.first, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Black)
-                            Text(":", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Pink)
-                            Text(takeHourFormatted.second, fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Black)
-                        }
-                    }
-                    Text(
-                        takeHourFormatted.third,
-                        color = GrayText,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Button(
-                        onClick = {
-                            if (!isTakenToday && isTimeToTake) {
-                                pillViewModel.takePill(cycleState?.getOrNull()?.id ?: "" , today, hourTake.toString(), "taken", null)
-                                AlertDialogTake = true
-                            }
-                        },
-                        shape = RoundedCornerShape(16.dp),
-                        enabled = !isTakenToday
-                    ) {
-                        Text(
-                            text = when {
-                                isTakenToday -> "Ya registrada"
-                                !isTimeToTake -> "Espera la hora"
-                                else -> "Registrar toma"
-                            },
-                            color = when {
-                                isTakenToday || !isTimeToTake -> GrayText
-                                else -> White
-                            },
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(takeHourFormatted.first, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Black)
+                        Text(":", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Pink)
+                        Text(takeHourFormatted.second, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Black)
                     }
                 }
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = nextDoseText,
+                    takeHourFormatted.third,
                     color = GrayText,
                     fontSize = 12.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    modifier = Modifier.padding(start = 4.dp)
                 )
-
             }
+
+            Button(
+                onClick = {
+                    if (!isTakenToday && isTimeToTake) {
+                        pillViewModel.takePill(cycleState?.getOrNull()?.id ?: "" , today, hourTake.toString(), "taken", null)
+                        AlertDialogTake = true
+                    }
+                },
+                shape = RoundedCornerShape(12.dp),
+                enabled = !isTakenToday && isTimeToTake,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = when {
+                        isTakenToday -> LightGray
+                        !isTimeToTake -> LightGray
+                        else -> Pink
+                    }
+                )
+            ) {
+                Text(
+                    text = when {
+                        isTakenToday -> "Ya registrada"
+                        !isTimeToTake -> "Espera la hora"
+                        else -> "Registrar toma"
+                    },
+                    color = when {
+                        isTakenToday -> GrayText
+                        !isTimeToTake -> GrayText
+                        else -> White
+                    },
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp
+                )
+            }
+
+            Text(
+                text = nextDoseText,
+                color = GrayText,
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center
+            )
         }
     }
 
@@ -288,5 +280,3 @@ fun TakePillComponent(
         )
     }
 }
-
-
