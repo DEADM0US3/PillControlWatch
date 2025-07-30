@@ -91,6 +91,7 @@ private val Black = Color(0xFF000000) // para que sea explícito
 @Composable
 fun HomeScreenUI(
     navigateToFriends : () -> Unit,
+    navigateToLogin: () -> Unit = {}, // Nuevo parámetro para navegación
     cycleViewModel: CycleViewModel = koinViewModel(),
     pillViewModel: PillViewModel = koinViewModel(),
     friendsViewModel: FriendsViewModel = koinViewModel() // <-- ViewModel con lógica de amigas
@@ -150,9 +151,10 @@ fun HomeScreenUI(
             Spacer(Modifier.height(8.dp))
             ProtectionStatusSection()
             Spacer(Modifier.height(8.dp))
-
-
-
+            MascotReminderSection()
+            Spacer(Modifier.height(8.dp))
+            LogoutSection(navigateToLogin = navigateToLogin)
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -637,6 +639,89 @@ fun DateBlock(title: String, date: String) {
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold
             )
+        }
+    }
+}
+
+@Composable
+fun LogoutSection(
+    homeViewModel: HomeViewModel = koinViewModel(),
+    navigateToLogin: () -> Unit = {}
+) {
+    val uiState by homeViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(4.dp, RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.dp))
+            .background(White)
+            .padding(20.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Spacer(Modifier.height(16.dp))
+            
+            // Título
+            Text(
+                text = "Desconectar",
+                color = Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(Modifier.height(8.dp))
+            
+            // Descripción
+            Text(
+                text = "¿Deseas desconectar tu dispositivo actual?",
+                color = GrayText,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(Modifier.height(20.dp))
+            
+            // Botón de logout
+            Button(
+                onClick = {
+                    homeViewModel.logout {
+                        // Callback que se ejecuta cuando el logout es exitoso
+                        navigateToLogin()
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFE91E63) // Rojo para logout
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = "Salir",
+                    color = White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+            
+            // Mostrar mensaje de error si existe
+            uiState.errorMessage?.let { errorMessage ->
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = errorMessage,
+                    color = Color(0xFFE91E63),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
